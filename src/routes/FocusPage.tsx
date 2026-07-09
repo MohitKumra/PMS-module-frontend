@@ -73,7 +73,6 @@ export function FocusPage() {
   const minutes = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
   const seconds = (secondsLeft % 60).toString().padStart(2, '0');
   const progress = 1 - secondsLeft / (DURATIONS[mode] * 60);
-  const circumference = 2 * Math.PI * 100;
 
   const totalFocusMin = sessions?.data.filter((s) => s.completed).reduce((acc, s) => acc + s.durationMin, 0) ?? 0;
 
