@@ -7,7 +7,7 @@ import { useTasks } from '../features/tasks/hooks/useTasks';
 import { useHabits } from '../features/habits/hooks/useHabits';
 import { LoadingScreen } from '../components/ui/Spinner';
 import { formatDate } from '../lib/dateUtils';
-import type { AnalyticsSummaryDTO } from '../../../shared/types';
+import type { AnalyticsSummaryDTO } from '../types';
 
 function QuickStat({ icon, label, value, to, color = 'text-accent' }: {
   icon: React.ReactNode; label: string; value: string | number; to: string; color?: string;

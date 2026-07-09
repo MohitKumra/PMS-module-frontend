@@ -3,7 +3,7 @@ import { Timer, Play, Pause, RotateCcw } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../lib/apiClient';
 import { Button } from '../components/ui/Button';
-import type { FocusSessionDTO, CreateFocusSessionRequest, ListResponse } from '../../../shared/types';
+import type { FocusSessionDTO, CreateFocusSessionRequest, ListResponse } from '../types';
 
 type TimerMode = 'focus' | 'short_break' | 'long_break';
 const DURATIONS: Record<TimerMode, number> = {

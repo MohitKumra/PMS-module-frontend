@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { authApi } from '../api';
 import { useAuthStore } from '../../../store/authStore';
 import { queryClient } from '../../../lib/queryClient';
-import type { LoginRequest, SignupRequest } from '../../../../../shared/types';
+import type { LoginRequest, SignupRequest } from '../../../types';
 
 export function useLogin() {
   const setAuth = useAuthStore((s) => s.setAuth);

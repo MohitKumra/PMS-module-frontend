@@ -3,6 +3,8 @@
 // Components call notify() — never the Web Notifications API or Capacitor plugins directly.
 // This is the single branch point for web vs native behavior.
 
+import { LocalNotifications } from '@capacitor/local-notifications';
+
 export interface NotifyPayload {
   title: string;
   body: string;
@@ -19,9 +21,8 @@ function isNative(): boolean {
 /** Request notification permission. Returns true if granted. */
 export async function requestPermission(): Promise<boolean> {
   if (isNative()) {
-    // TODO(capacitor): const { display } = await LocalNotifications.requestPermissions();
-    // return display === 'granted';
-    return false;
+    const { display } = await LocalNotifications.requestPermissions();
+    return display === 'granted';
   }
   if (!('Notification' in window)) return false;
   const result = await Notification.requestPermission();
@@ -31,7 +32,15 @@ export async function requestPermission(): Promise<boolean> {
 /** Send a notification via the appropriate platform channel. */
 export async function notify(payload: NotifyPayload): Promise<void> {
   if (isNative()) {
-    // TODO(capacitor): await LocalNotifications.schedule({ notifications: [{ ... }] });
+    await LocalNotifications.schedule({
+      notifications: [
+        {
+          title: payload.title,
+          body: payload.body,
+          id: Math.floor(Math.random() * 1000000) + 1,
+        },
+      ],
+    });
     return;
   }
   if (!('Notification' in window)) return;

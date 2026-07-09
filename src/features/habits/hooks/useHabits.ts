@@ -1,7 +1,7 @@
 // frontend/src/features/habits/hooks/useHabits.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { habitsApi } from '../api';
-import type { CreateHabitRequest } from '../../../../../shared/types';
+import type { CreateHabitRequest } from '../../../types';
 
 const HABITS_KEY = ['habits'] as const;
 

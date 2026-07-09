@@ -7,7 +7,7 @@ import { Input, Textarea } from '../components/ui/Input';
 import { PriorityBadge, StatusBadge } from '../components/ui/Badge';
 import { LoadingScreen } from '../components/ui/Spinner';
 import { formatDate } from '../lib/dateUtils';
-import type { TaskDTO, Priority } from '../../../shared/types';
+import type { TaskDTO, Priority } from '../types';
 
 function TaskCard({ task }: { task: TaskDTO }) {
   const updateTask = useUpdateTask();

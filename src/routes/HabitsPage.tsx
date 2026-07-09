@@ -5,7 +5,7 @@ import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { LoadingScreen } from '../components/ui/Spinner';
-import type { HabitDTO } from '../../../shared/types';
+import type { HabitDTO } from '../types';
 
 function HabitCard({ habit }: { habit: HabitDTO }) {
   const toggle = useToggleHabit();

@@ -1,6 +1,6 @@
 // frontend/src/features/tasks/api.ts
 import apiClient from '../../lib/apiClient';
-import type { TaskDTO, CreateTaskRequest, UpdateTaskRequest, ListResponse } from '../../../../shared/types';
+import type { TaskDTO, CreateTaskRequest, UpdateTaskRequest, ListResponse } from '../../types';
 
 export const tasksApi = {
   list: (params?: Record<string, string>) =>

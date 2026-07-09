@@ -1,7 +1,7 @@
 // frontend/src/features/tasks/hooks/useTasks.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tasksApi } from '../api';
-import type { CreateTaskRequest, UpdateTaskRequest } from '../../../../../shared/types';
+import type { CreateTaskRequest, UpdateTaskRequest } from '../../../types';
 
 const TASKS_KEY = ['tasks'] as const;
 

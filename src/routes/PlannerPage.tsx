@@ -4,7 +4,7 @@ import { useTasks, useUpdateTask } from '../features/tasks/hooks/useTasks';
 import { LoadingScreen } from '../components/ui/Spinner';
 import { PriorityBadge } from '../components/ui/Badge';
 import { getWeekDays, getMonthDays, addDays, subDays, isSameDay, isToday, format } from '../lib/dateUtils';
-import type { TaskDTO } from '../../../shared/types';
+import type { TaskDTO } from '../types';
 
 type PlannerView = 'day' | 'week' | 'month';
 

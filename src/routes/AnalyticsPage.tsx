@@ -5,7 +5,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar,
 } from 'recharts';
 import { LoadingScreen } from '../components/ui/Spinner';
-import type { AnalyticsSummaryDTO, DailyAnalyticsDTO } from '../../../shared/types';
+import type { AnalyticsSummaryDTO, DailyAnalyticsDTO } from '../types';
 
 function StatCard({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string | number; sub?: string }) {
   return (

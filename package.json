@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/local-notifications": "^8.2.0",
     "@tailwindcss/vite": "^4.3.2",
     "@tanstack/react-query": "^5.101.2",
     "axios": "^1.18.1",
@@ -24,6 +26,8 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

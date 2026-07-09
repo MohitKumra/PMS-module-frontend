@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 import { Input, Textarea } from '../components/ui/Input';
 import { LoadingScreen } from '../components/ui/Spinner';
 import { fromNow } from '../lib/dateUtils';
-import type { NoteDTO } from '../../../shared/types';
+import type { NoteDTO } from '../types';
 
 function NoteCard({ note, onClick }: { note: NoteDTO; onClick: () => void }) {
   const deleteNote = useDeleteNote();

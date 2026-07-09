@@ -1,6 +1,6 @@
 // frontend/src/features/notifications/api.ts
 import apiClient from '../../lib/apiClient';
-import type { ListResponse, NotificationLogDTO, PushSubscriptionRequest } from '../../../../shared/types';
+import type { ListResponse, NotificationLogDTO, PushSubscriptionRequest } from '../../types';
 
 export const notificationsApi = {
   getVapidKey: () =>

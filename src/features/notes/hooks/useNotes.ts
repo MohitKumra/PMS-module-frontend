@@ -1,7 +1,7 @@
 // frontend/src/features/notes/hooks/useNotes.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notesApi } from '../api';
-import type { CreateNoteRequest, UpdateNoteRequest } from '../../../../../shared/types';
+import type { CreateNoteRequest, UpdateNoteRequest } from '../../../types';
 
 const NOTES_KEY = ['notes'] as const;
 

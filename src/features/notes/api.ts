@@ -1,6 +1,6 @@
 // frontend/src/features/notes/api.ts
 import apiClient from '../../lib/apiClient';
-import type { NoteDTO, CreateNoteRequest, UpdateNoteRequest, ListResponse } from '../../../../shared/types';
+import type { NoteDTO, CreateNoteRequest, UpdateNoteRequest, ListResponse } from '../../types';
 
 export const notesApi = {
   list: (isJournal?: boolean) =>

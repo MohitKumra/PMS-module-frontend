@@ -1,6 +1,6 @@
 // frontend/src/features/habits/api.ts
 import apiClient from '../../lib/apiClient';
-import type { HabitDTO, CreateHabitRequest, UpdateHabitRequest, ListResponse } from '../../../../shared/types';
+import type { HabitDTO, CreateHabitRequest, UpdateHabitRequest, ListResponse } from '../../types';
 
 export const habitsApi = {
   list: () => apiClient.get<ListResponse<HabitDTO>>('/habits').then((r) => r.data),

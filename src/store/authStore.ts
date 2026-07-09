@@ -7,7 +7,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { UserDTO } from '../../../shared/types';
+import type { UserDTO } from '../types';
 
 interface AuthState {
   accessToken: string | null;

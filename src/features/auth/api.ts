@@ -1,6 +1,6 @@
 // frontend/src/features/auth/api.ts
 import apiClient from '../../lib/apiClient';
-import type { AuthResponse, LoginRequest, SignupRequest } from '../../../../shared/types';
+import type { AuthResponse, LoginRequest, SignupRequest } from '../../types';
 
 export const authApi = {
   signup: (data: SignupRequest) =>
