@@ -1,0 +1,8 @@
+/*
+ * App.css — intentionally empty.
+ *
+ * All global styles live in src/styles/globals.css.
+ * All color/theme tokens live in src/styles/tokens.css.
+ * Component styles use Tailwind utility classes referencing those tokens.
+ * Per theme.md: no raw hex values or non-semantic CSS variables in components.
+ */
