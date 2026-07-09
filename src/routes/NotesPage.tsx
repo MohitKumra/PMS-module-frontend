@@ -6,37 +6,48 @@ import { Button } from '../components/ui/Button';
 import { Input, Textarea } from '../components/ui/Input';
 import { LoadingScreen } from '../components/ui/Spinner';
 import { fromNow } from '../lib/dateUtils';
+import { PageHeader } from '../components/ui/PageHeader';
+import { TabBar } from '../components/ui/TabBar';
+import { EmptyState } from '../components/ui/EmptyState';
+import { Card } from '../components/ui/Card';
 import type { NoteDTO } from '../types';
 
 function NoteCard({ note, onClick }: { note: NoteDTO; onClick: () => void }) {
   const deleteNote = useDeleteNote();
   return (
-    <div
-      className="glass rounded-xl p-4 cursor-pointer hover:border-accent/40 transition-all animate-fade-in group relative"
+    <Card
+      variant="default"
+      hoverable
+      className="p-5 sm:p-6 cursor-pointer relative group flex flex-col justify-between"
       onClick={onClick}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            {note.isJournal
-              ? <BookOpen size={14} className="text-accent shrink-0" />
-              : <StickyNote size={14} className="text-info shrink-0" />
-            }
-            <p className="text-sm font-medium text-text-primary truncate">
+          <div className="flex items-center gap-2.5 mb-2.5">
+            {note.isJournal ? (
+              <BookOpen size={18} className="text-accent shrink-0" />
+            ) : (
+              <StickyNote size={18} className="text-info shrink-0" />
+            )}
+            <p className="text-base sm:text-lg font-bold text-text-primary truncate">
               {note.title || 'Untitled'}
             </p>
           </div>
-          <p className="text-xs text-text-muted line-clamp-3">{note.content}</p>
-          <p className="text-xs text-text-muted mt-2 opacity-60">{fromNow(note.updatedAt)}</p>
+          <p className="text-xs sm:text-sm text-text-secondary line-clamp-3 leading-relaxed">
+            {note.content}
+          </p>
         </div>
         <button
           onClick={(e) => { e.stopPropagation(); deleteNote.mutate(note.id); }}
-          className="tap-target opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-danger/10 text-text-muted hover:text-danger transition-all shrink-0"
+          className="opacity-0 group-hover:opacity-100 p-2 rounded-xl hover:bg-red-500/10 text-red-500 hover:text-red-600 transition-all shrink-0 tap-target"
         >
-          <Trash2 size={14} />
+          <Trash2 size={16} />
         </button>
       </div>
-    </div>
+      <p className="text-[10px] text-text-muted mt-4 font-bold select-none">
+        Updated {fromNow(note.updatedAt)}
+      </p>
+    </Card>
   );
 }
 
@@ -77,43 +88,53 @@ export function NotesPage() {
 
   if (isLoading) return <LoadingScreen />;
 
+  const tabOptions = [
+    { id: 'notes', label: '📝 Notes' },
+    { id: 'journal', label: '📔 Journal' },
+  ];
+
   return (
-    <div className="p-4 md:p-6 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
-          <FileText className="text-accent" size={24} /> Notes
-        </h1>
-        <Button onClick={() => { setTitle(''); setContent(''); setShowCreate(true); }} leftIcon={<Plus size={16} />} id="create-note-btn">
-          New {tab === 'journal' ? 'Entry' : 'Note'}
-        </Button>
-      </div>
+    <div className="max-w-4xl mx-auto flex flex-col gap-6 sm:gap-8">
+      {/* Header */}
+      <PageHeader
+        icon={<FileText size={24} />}
+        title="Notes & Journal"
+        subtitle={tab === 'journal' ? `${notes.length} journal entries` : `${notes.length} notes`}
+        action={
+          <Button onClick={() => { setTitle(''); setContent(''); setShowCreate(true); }} leftIcon={<Plus size={16} />} id="create-note-btn">
+            New {tab === 'journal' ? 'Entry' : 'Note'}
+          </Button>
+        }
+      />
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-4">
-        {(['notes', 'journal'] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-colors ${
-              tab === t ? 'bg-accent text-text-onaccent' : 'bg-surface text-text-muted'
-            }`}
-          >{t === 'journal' ? '📔 Journal' : '📝 Notes'}</button>
-        ))}
-      </div>
+      <TabBar
+        tabs={tabOptions}
+        activeTab={tab}
+        onTabChange={(id) => setTab(id as 'notes' | 'journal')}
+        variant="pill"
+      />
 
       {notes.length === 0 ? (
-        <div className="text-center py-16 text-text-muted">
-          <FileText size={40} className="mx-auto mb-3 opacity-30" />
-          <p className="font-medium">No {tab} yet</p>
-          <p className="text-sm mt-1">Write your first {tab === 'journal' ? 'journal entry' : 'note'}</p>
-        </div>
+        <EmptyState
+          icon={<FileText size={32} />}
+          title={`No ${tab} found`}
+          description={`Start writing your first ${tab === 'journal' ? 'journal entry' : 'note'} to organize your thoughts.`}
+          action={
+            <Button onClick={() => { setTitle(''); setContent(''); setShowCreate(true); }} leftIcon={<Plus size={16} />}>
+              Create {tab === 'journal' ? 'Entry' : 'Note'}
+            </Button>
+          }
+        />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 stagger">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4.5 stagger animate-fade-in">
           {notes.map((n) => <NoteCard key={n.id} note={n} onClick={() => openEdit(n)} />)}
         </div>
       )}
 
       {/* Create modal */}
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title={tab === 'journal' ? 'New Journal Entry' : 'New Note'}>
-        <form onSubmit={handleCreate} className="flex flex-col gap-4 pt-2">
+        <form onSubmit={handleCreate} className="flex flex-col gap-5 pt-2">
           <Input id="note-title" label="Title (optional)" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Untitled" />
           <Textarea id="note-content" label="Content" value={content} onChange={(e) => setContent(e.target.value)} rows={8} required placeholder="Start writing…" />
           <Button type="submit" fullWidth loading={createNote.isPending}>Save</Button>
@@ -122,7 +143,7 @@ export function NotesPage() {
 
       {/* Edit modal */}
       <Modal open={!!editing} onClose={() => setEditing(null)} title="Edit Note">
-        <form onSubmit={handleUpdate} className="flex flex-col gap-4 pt-2">
+        <form onSubmit={handleUpdate} className="flex flex-col gap-5 pt-2">
           <Input id="edit-note-title" label="Title (optional)" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Untitled" />
           <Textarea id="edit-note-content" label="Content" value={content} onChange={(e) => setContent(e.target.value)} rows={8} required />
           <Button type="submit" fullWidth loading={updateNote.isPending}>Update</Button>

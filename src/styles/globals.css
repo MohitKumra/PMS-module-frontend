@@ -43,9 +43,9 @@
   --color-text-primary:   var(--color-text-primary);
   --color-text-secondary: var(--color-text-secondary);
   --color-text-muted:     var(--color-text-muted);
-  --color-text-onaccent:  var(--color-text-on-accent);
+  --color-text-onaccent:  var(--color-text-onaccent);
 
-  /* Accent (orange — identical in both themes) */
+  /* Accent (identical in both themes) */
   --color-accent:         var(--color-accent);
   --color-accent-hover:   var(--color-accent-hover);
   --color-accent-active:  var(--color-accent-active);
@@ -138,6 +138,14 @@
     border: 1px solid color-mix(in srgb, var(--color-text-primary) 6%, transparent);
   }
 
+  /* Stronger glass variant */
+  .glass-strong {
+    background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid color-mix(in srgb, var(--color-text-primary) 10%, transparent);
+  }
+
   /* Tap target minimum */
   .tap-target {
     min-height: 44px;
@@ -146,9 +154,76 @@
     align-items: center;
     justify-content: center;
   }
+
+  /* Backdrop blur overlay for modals */
+  .backdrop-blur-overlay {
+    backdrop-filter: blur(var(--overlay-blur));
+    -webkit-backdrop-filter: blur(var(--overlay-blur));
+    background: var(--overlay-bg);
+  }
+
+  /* Page content transition wrapper */
+  .page-enter {
+    animation: page-enter var(--transition-normal) var(--ease-out-expo) both;
+  }
+
+  /* Card interactive states using tokens */
+  .card-interactive {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    transition: all var(--transition-normal) var(--ease-out-smooth);
+  }
+  .card-interactive:hover {
+    border-color: var(--card-hover-border);
+    box-shadow: var(--card-hover-shadow);
+    transform: translateY(-2px);
+  }
+
+  /* Sidebar item using tokens */
+  .sidebar-item {
+    color: var(--sidebar-text);
+    transition: all var(--transition-fast) var(--ease-out-smooth);
+  }
+  .sidebar-item:hover {
+    background: var(--sidebar-item-hover);
+    color: var(--color-text-primary);
+  }
+  .sidebar-item-active {
+    background: var(--sidebar-item-active-bg);
+    color: var(--sidebar-text-active);
+    border-left: 3px solid var(--sidebar-item-active-border);
+  }
+
+  /* Gradient text utility */
+  .text-gradient {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Live dot pulse */
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--live-dot-color);
+    animation: live-pulse 2s ease-in-out infinite;
+  }
+
+  /* Icon container utility */
+  .icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
 }
 
-/* Animations */
+/* ====== KEYFRAME ANIMATIONS ====== */
+
+/* Core entrance animations */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -164,20 +239,74 @@
   to   { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scale-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.95); }
+}
+
 @keyframes tick {
   0%, 100% { transform: scale(1); }
   50%       { transform: scale(1.1); }
 }
 
-.animate-fade-in   { animation: fade-in 0.25s ease-out both; }
-.animate-slide-up  { animation: slide-up 0.3s cubic-bezier(0.4,0,0.2,1) both; }
-.animate-slide-in  { animation: slide-in 0.25s ease-out both; }
-.animate-tick      { animation: tick 0.2s ease-in-out; }
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(0.85); }
+}
 
-/* Staggered children delay */
-.stagger > *:nth-child(1) { animation-delay: 0ms; }
-.stagger > *:nth-child(2) { animation-delay: 50ms; }
-.stagger > *:nth-child(3) { animation-delay: 100ms; }
-.stagger > *:nth-child(4) { animation-delay: 150ms; }
-.stagger > *:nth-child(5) { animation-delay: 200ms; }
-.stagger > *:nth-child(6) { animation-delay: 250ms; }
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes progress-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ====== ANIMATION UTILITY CLASSES ====== */
+.animate-fade-in     { animation: fade-in var(--transition-normal) var(--ease-out-expo) both; }
+.animate-slide-up    { animation: slide-up 0.3s var(--ease-out-smooth) both; }
+.animate-slide-in    { animation: slide-in var(--transition-normal) var(--ease-out-expo) both; }
+.animate-slide-down  { animation: slide-down var(--transition-normal) var(--ease-out-expo) both; }
+.animate-scale-in    { animation: scale-in var(--transition-normal) var(--ease-out-expo) both; }
+.animate-tick        { animation: tick 0.2s ease-in-out; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, var(--color-accent-subtle) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ====== STAGGER DELAYS (up to 12 children) ====== */
+.stagger > *:nth-child(1)  { animation-delay: 0ms; }
+.stagger > *:nth-child(2)  { animation-delay: 50ms; }
+.stagger > *:nth-child(3)  { animation-delay: 100ms; }
+.stagger > *:nth-child(4)  { animation-delay: 150ms; }
+.stagger > *:nth-child(5)  { animation-delay: 200ms; }
+.stagger > *:nth-child(6)  { animation-delay: 250ms; }
+.stagger > *:nth-child(7)  { animation-delay: 300ms; }
+.stagger > *:nth-child(8)  { animation-delay: 350ms; }
+.stagger > *:nth-child(9)  { animation-delay: 400ms; }
+.stagger > *:nth-child(10) { animation-delay: 450ms; }
+.stagger > *:nth-child(11) { animation-delay: 500ms; }
+.stagger > *:nth-child(12) { animation-delay: 550ms; }

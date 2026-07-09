@@ -5,22 +5,22 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   rightIcon?: React.ReactNode;
 }
 
-/** Styled input with optional label and error message. */
+/** Premium enterprise input component with label, error & icons */
 export function Input({
   label, error, leftIcon, rightIcon,
   id, className = '', ...props
 }: InputProps) {
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-text-muted">
+        <label htmlFor={inputId} className="text-sm font-semibold text-text-primary">
           {label}
         </label>
       )}
       <div className="relative flex items-center">
         {leftIcon && (
-          <span className="absolute left-3 text-text-muted pointer-events-none">
+          <span className="absolute left-4 text-text-muted pointer-events-none">
             {leftIcon}
           </span>
         )}
@@ -28,27 +28,29 @@ export function Input({
           id={inputId}
           {...props}
           className={[
-            'w-full bg-surface border rounded-md text-text-primary',
-            'placeholder-text-muted',
-            'transition-colors duration-150',
-            'focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent',
+            'w-full bg-surface border rounded-lg text-text-primary',
+            'placeholder:text-text-muted',
+            'transition-all duration-200',
+            'focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 focus:ring-offset-bg focus:border-accent',
             error
-              ? 'border-danger'
-              : 'border-border hover:border-text-muted',
-            'min-h-[44px] px-4 py-2.5 text-sm',
-            leftIcon  ? 'pl-10' : '',
-            rightIcon ? 'pr-10' : '',
+              ? 'border-danger focus:ring-danger/40'
+              : 'border-border hover:border-border-strong',
+            'min-h-[48px] px-4 py-3 text-sm',
+            leftIcon  ? 'pl-11' : '',
+            rightIcon ? 'pr-11' : '',
             className,
           ].join(' ')}
         />
         {rightIcon && (
-          <span className="absolute right-3 text-text-muted">
+          <span className="absolute right-4 text-text-muted">
             {rightIcon}
           </span>
         )}
       </div>
       {error && (
-        <p className="text-xs text-danger">{error}</p>
+        <p className="text-xs text-danger flex items-center gap-1">
+          {error}
+        </p>
       )}
     </div>
   );
@@ -62,9 +64,9 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 export function Textarea({ label, error, id, className = '', ...props }: TextareaProps) {
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-text-muted">
+        <label htmlFor={inputId} className="text-sm font-semibold text-text-primary">
           {label}
         </label>
       )}
@@ -72,13 +74,13 @@ export function Textarea({ label, error, id, className = '', ...props }: Textare
         id={inputId}
         {...props}
         className={[
-          'w-full bg-surface border rounded-md text-text-primary',
-          'placeholder-text-muted resize-none',
-          'transition-colors duration-150',
-          'focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent',
+          'w-full bg-surface border rounded-lg text-text-primary',
+          'placeholder:text-text-muted resize-none',
+          'transition-all duration-200',
+          'focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 focus:ring-offset-bg focus:border-accent',
           error
-            ? 'border-danger'
-            : 'border-border hover:border-text-muted',
+            ? 'border-danger focus:ring-danger/40'
+            : 'border-border hover:border-border-strong',
           'px-4 py-3 text-sm',
           className,
         ].join(' ')}
