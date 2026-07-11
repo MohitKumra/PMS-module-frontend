@@ -11,6 +11,9 @@ export interface EntryFormState {
   isJournal: boolean;
 }
 
+
+  
+
 interface EntryFormModalProps {
   isOpen: boolean;
   mode: 'create' | 'edit';
