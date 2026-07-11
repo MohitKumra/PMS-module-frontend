@@ -9,10 +9,10 @@ export interface EntryFormState {
   title: string;
   content: string;
   isJournal: boolean;
-}
+}   
 
 
-  
+
 
 interface EntryFormModalProps {
   isOpen: boolean;
