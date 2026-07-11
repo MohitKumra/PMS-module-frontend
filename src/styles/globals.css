@@ -1,0 +1,358 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/*
+ * Dark mode: activate when data-theme="dark" is set on <html>.
+ * This matches applyThemeToDocument() in platform/theme.ts.
+ */
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * Tailwind v4 theme mapping.
+ *
+ * In Tailwind v4, utility classes are generated from @theme.
+ * @theme values must be static (no var() references inside @theme).
+ * The actual theming (light/dark switching) is done by tokens.css which
+ * sets the CSS custom properties on :root and [data-theme='dark'].
+ *
+ * We wire Tailwind utilities to those CSS variables by using `inline`
+ * keyword so that the generated utility class just sets the CSS var
+ * directly, letting tokens.css do the theme switching.
+ *
+ * Generated class examples:
+ *   bg-bg              → background-color: var(--color-bg)
+ *   bg-surface         → background-color: var(--color-surface)
+ *   bg-surface-raised  → background-color: var(--color-surface-raised)
+ *   bg-accent          → background-color: var(--color-accent)
+ *   text-text-primary  → color: var(--color-text-primary)
+ *   text-text-onaccent → color: var(--color-text-on-accent)
+ *   border-border      → border-color: var(--color-border)
+ *   ring-focus         → ring-color: var(--color-focus-ring)
+ */
+@theme inline {
+  /* Page / layout backgrounds */
+  --color-bg:             var(--color-bg);
+  --color-surface:        var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+
+  /* Borders */
+  --color-border:         var(--color-border);
+  --color-border-strong:  var(--color-border-strong);
+
+  /* Text */
+  --color-text-primary:   var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted:     var(--color-text-muted);
+  --color-text-onaccent:  var(--color-text-onaccent);
+
+  /* Accent (identical in both themes) */
+  --color-accent:         var(--color-accent);
+  --color-accent-hover:   var(--color-accent-hover);
+  --color-accent-active:  var(--color-accent-active);
+  --color-accent-subtle:  var(--color-accent-subtle);
+  --color-accent-border:  var(--color-accent-border);
+
+  /* Status */
+  --color-success:        var(--color-success);
+  --color-danger:         var(--color-danger);
+  --color-warning:        var(--color-warning);
+  --color-info:           var(--color-info);
+
+  /* Focus ring */
+  --color-focus-ring:     var(--color-focus-ring);
+
+  /* Border radius scale */
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     16px;
+  --radius-sheet:  20px;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100dvh;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* Safe area support for Capacitor / notch devices */
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+}
+
+@layer utilities {
+  /* GPU-accelerated transform for smooth animations */
+  .transform-gpu {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  /* Filter tab traveling highlight */
+  .filter-highlight-travel {
+    position: fixed;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: filter-highlight-travel var(--transition-normal) var(--ease-out-expo) forwards;
+  }
+
+  @keyframes filter-highlight-travel {
+    0% {
+      transform: translate(var(--start-x, 0), var(--start-y, 0)) scale(0);
+      opacity: 0.8;
+    }
+    30% {
+      transform: translate(var(--start-x, 0), var(--start-y, 0)) scale(1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(var(--end-x, 0), var(--end-y, 0)) scale(var(--end-scale, 1));
+      opacity: 0;
+    }
+  }
+
+  /* Glass morphism utility */
+  .glass {
+    background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--color-text-primary) 6%, transparent);
+  }
+
+  /* Focus mode overlay - ensure it covers full viewport */
+  .focus-mode-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+  }
+
+  /* Stronger glass variant */
+  .glass-strong {
+    background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid color-mix(in srgb, var(--color-text-primary) 10%, transparent);
+  }
+
+  /* Tap target minimum */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Backdrop blur overlay for modals */
+  .backdrop-blur-overlay {
+    backdrop-filter: blur(var(--overlay-blur));
+    -webkit-backdrop-filter: blur(var(--overlay-blur));
+    background: var(--overlay-bg);
+  }
+
+  /* Page content transition wrapper */
+  .page-enter {
+    animation: page-enter var(--transition-normal) var(--ease-out-expo) both;
+  }
+
+  /* Card interactive states using tokens */
+  .card-interactive {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    transition: all var(--transition-normal) var(--ease-out-smooth);
+  }
+  .card-interactive:hover {
+    border-color: var(--card-hover-border);
+    box-shadow: var(--card-hover-shadow);
+    transform: translateY(-2px);
+  }
+
+  /* Sidebar item using tokens */
+  .sidebar-item {
+    color: var(--sidebar-text);
+    transition: all var(--transition-fast) var(--ease-out-smooth);
+  }
+  .sidebar-item:hover {
+    background: var(--sidebar-item-hover);
+    color: var(--color-text-primary);
+  }
+  .sidebar-item-active {
+    background: var(--sidebar-item-active-bg);
+    color: var(--sidebar-text-active);
+    border-left: 3px solid var(--sidebar-item-active-border);
+  }
+
+  /* Gradient text utility */
+  .text-gradient {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Live dot pulse */
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--live-dot-color);
+    animation: live-pulse 2s ease-in-out infinite;
+  }
+
+  /* Icon container utility */
+  .icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+}
+
+/* ====== KEYFRAME ANIMATIONS ====== */
+
+/* Core entrance animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scale-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes tick {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.1); }
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(0.85); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes progress-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ====== ANIMATION UTILITY CLASSES ====== */
+.animate-fade-in     { animation: fade-in var(--transition-normal) var(--ease-out-expo) both; }
+.animate-slide-up    { animation: slide-up 0.3s var(--ease-out-smooth) both; }
+.animate-slide-in    { animation: slide-in var(--transition-normal) var(--ease-out-expo) both; }
+.animate-slide-down  { animation: slide-down var(--transition-normal) var(--ease-out-expo) both; }
+.animate-scale-in    { animation: scale-in var(--transition-normal) var(--ease-out-expo) both; }
+.animate-tick        { animation: tick 0.2s ease-in-out; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, var(--color-accent-subtle) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ====== STAGGER DELAYS (up to 12 children) ====== */
+.stagger > *:nth-child(1)  { animation-delay: 0ms; }
+.stagger > *:nth-child(2)  { animation-delay: 50ms; }
+.stagger > *:nth-child(3)  { animation-delay: 100ms; }
+.stagger > *:nth-child(4)  { animation-delay: 150ms; }
+.stagger > *:nth-child(5)  { animation-delay: 200ms; }
+.stagger > *:nth-child(6)  { animation-delay: 250ms; }
+.stagger > *:nth-child(7)  { animation-delay: 300ms; }
+.stagger > *:nth-child(8)  { animation-delay: 350ms; }
+.stagger > *:nth-child(9)  { animation-delay: 400ms; }
+.stagger > *:nth-child(10) { animation-delay: 450ms; }
+.stagger > *:nth-child(11) { animation-delay: 500ms; }
+.stagger > *:nth-child(12) { animation-delay: 550ms; }
