@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import { Timer, Play, Pause, RotateCcw } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Timer, Play, Pause, RotateCcw, Maximize2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../lib/apiClient';
 import { Button } from '../components/ui/Button';
 import { PageHeader } from '../components/ui/PageHeader';
 import { TabBar } from '../components/ui/TabBar';
 import { Card } from '../components/ui/Card';
+import { FullScreenFocus } from '../components/focus/FullScreenFocus';
 import type { FocusSessionDTO, CreateFocusSessionRequest, ListResponse } from '../types';
 
 type TimerMode = 'focus' | 'short_break' | 'long_break';
@@ -18,6 +19,8 @@ export function FocusPage() {
   const [secondsLeft, setSecondsLeft] = useState(DURATIONS.focus * 60);
   const [running, setRunning] = useState(false);
   const [startedAt, setStartedAt] = useState<string | null>(null);
+  const [fullScreen, setFullScreen] = useState(false);
+  const [breaksTaken, setBreaksTaken] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const qc = useQueryClient();
 
@@ -41,6 +44,8 @@ export function FocusPage() {
             setRunning(false);
             if (mode === 'focus' && startedAt) {
               logSession.mutate({ durationMin: DURATIONS.focus, startedAt, completed: true });
+            } else if (mode !== 'focus') {
+              setBreaksTaken((b) => b + 1);
             }
             return 0;
           }
@@ -59,22 +64,52 @@ export function FocusPage() {
     setRunning(false);
   };
 
-  const handleStartPause = () => {
-    if (!running && !startedAt) setStartedAt(new Date().toISOString());
-    setRunning((r) => !r);
-  };
+  const handleStartPause = useCallback(() => {
+    setRunning((r) => {
+      if (!r) setStartedAt((s) => s ?? new Date().toISOString());
+      return !r;
+    });
+  }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setRunning(false);
     setSecondsLeft(DURATIONS[mode] * 60);
     setStartedAt(null);
-  };
+  }, [mode]);
+
+  const exitFullScreen = useCallback(() => setFullScreen(false), []);
 
   const minutes = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
   const seconds = (secondsLeft % 60).toString().padStart(2, '0');
   const progress = 1 - secondsLeft / (DURATIONS[mode] * 60);
 
   const totalFocusMin = sessions?.data.filter((s) => s.completed).reduce((acc, s) => acc + s.durationMin, 0) ?? 0;
+
+  const fullScreenStats = useMemo(() => {
+    const completed = sessions?.data.filter((s) => s.completed) ?? [];
+    const todayKey = new Date().toDateString();
+    const todaySessions = completed.filter((s) => new Date(s.startedAt).toDateString() === todayKey);
+
+    // Longest streak of consecutive days with at least one completed session
+    const dayMs = 24 * 60 * 60 * 1000;
+    const days = [...new Set(completed.map((s) => {
+      const d = new Date(s.startedAt);
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    }))].sort((a, b) => a - b);
+    let longest = days.length > 0 ? 1 : 0;
+    let run = 1;
+    for (let i = 1; i < days.length; i++) {
+      run = days[i] - days[i - 1] === dayMs ? run + 1 : 1;
+      longest = Math.max(longest, run);
+    }
+
+    return {
+      sessionsToday: todaySessions.length,
+      focusMinToday: todaySessions.reduce((acc, s) => acc + s.durationMin, 0),
+      breaksTaken,
+      longestStreakDays: longest,
+    };
+  }, [sessions, breaksTaken]);
 
   const modeTabs = [
     { id: 'focus', label: 'Focus' },
@@ -84,12 +119,35 @@ export function FocusPage() {
 
   return (
     <div className="max-w-2xl mx-auto flex flex-col items-center gap-6 sm:gap-8">
+      {fullScreen && (
+        <FullScreenFocus
+          mode={mode}
+          minutes={minutes}
+          seconds={seconds}
+          progress={progress}
+          running={running}
+          onStartPause={handleStartPause}
+          onReset={handleReset}
+          onExit={exitFullScreen}
+          stats={fullScreenStats}
+        />
+      )}
+
       {/* Header */}
       <PageHeader
         icon={<Timer size={24} />}
         title="Focus Timer"
         subtitle="Stay productive using Pomodoro technique"
       />
+
+      {/* Enter fullscreen focus mode */}
+      <button
+        onClick={() => setFullScreen(true)}
+        className="flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold text-text-secondary transition-all hover:text-text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800"
+      >
+        <Maximize2 size={15} />
+        Focus Mode
+      </button>
 
       {/* Mode Selector TabBar */}
       <TabBar
